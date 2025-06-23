@@ -5,6 +5,12 @@
       location = "group:layered.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:rain1.mp3">
+   </FileRef>
+   <FileRef
+      location = "group:rain2.mp3">
+   </FileRef>
+   <FileRef
       location = "group:Pods/Pods.xcodeproj">
    </FileRef>
 </Workspace>
