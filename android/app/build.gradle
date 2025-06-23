@@ -77,9 +77,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.jeong.tmp"
+    namespace "com.jeong.layered"
     defaultConfig {
-        applicationId "com.jeong.tmp"
+        applicationId "com.jeong.layered"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

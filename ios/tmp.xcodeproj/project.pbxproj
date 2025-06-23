@@ -138,8 +138,8 @@
 			);
 			dependencies = (
 			);
-			name = tmp;
-			productName = tmp;
+			name = layered;
+			productName = layered;
 			productReference = 13B07F961A680F5B00A75B9A /* tmp.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -298,8 +298,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jeong.tmp";
-				PRODUCT_NAME = tmp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeong.layered;
+				PRODUCT_NAME = layered;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -325,8 +325,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.jeong.tmp";
-				PRODUCT_NAME = tmp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.jeong.layered;
+				PRODUCT_NAME = layered;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
