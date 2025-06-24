@@ -1,7 +1,8 @@
 import {Text as RNText, TextStyle} from 'react-native';
+import {Colors} from '..//constants/Colors'
 export type TextProps = {
     text: string;
-    type: 'regular' | 'semibold' | 'extrabold' | 'black';
+    type?: 'regular' | 'semibold' | 'extrabold' | 'black';
     className?: string;
     style?: TextStyle | TextStyle[];
     numberOfLines?: number;
@@ -35,7 +36,7 @@ export const Text = ({text, type='regular', ...props}: TextProps) => {
     <RNText 
     {...props}
       className={props.className}
-      style={[fontStyle(type), props.style]}
+      style={[fontStyle(type), props.style,{color:Colors.line}]}
       numberOfLines={props.numberOfLines}>
       {text}
     </RNText>

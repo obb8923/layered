@@ -19,7 +19,7 @@ export default function App() {
       <SafeAreaProvider>
         <SafeAreaView style={{flex:1}} edges={[ 'left', 'right']} >
               <NavigationContainer>
-                <StatusBar barStyle="dark-content" translucent={true}/>
+                <StatusBar barStyle="light-content" translucent={true}/>
                 <Stack.Navigator screenOptions={{headerShown:false}}>
                   <Stack.Screen name="Home" component={HomeScreen} />
                 </Stack.Navigator>
