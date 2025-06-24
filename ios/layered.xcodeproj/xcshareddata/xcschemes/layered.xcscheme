@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "tmpTests.xctest"
-               BlueprintName = "tmpTests"
-               ReferencedContainer = "container:tmp.xcodeproj">
+               BuildableName = "layeredTests.xctest"
+               BlueprintName = "layeredTests"
+               ReferencedContainer = "container:layered.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
