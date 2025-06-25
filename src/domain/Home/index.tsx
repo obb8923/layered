@@ -4,16 +4,14 @@ import { Background } from '../../shared/components/Background';
 import { Text } from '../../shared/components/Text';
 import { SoundPlayer } from './components/SoundPlayer';
 import { FOREGROUND_HEIGHT } from '../../shared/constants/normal'
-
+import {Foreground} from './components/Foreground'
 export function HomeScreen() {
   const foregroundStyle = {height:FOREGROUND_HEIGHT,marginTop:24}
   return (
     <Background isStatusBarGap={true}>
       <View className='flex-1'>
         {/* foreground svgs */}
-        <View className="absolute top-0 bottom-0 left-0 right-0 w-full justice-center items-center px-8" style={foregroundStyle}>
-          <View className="w-full h-full bg-white/50 rounded-xl"></View>
-        </View>
+        <Foreground/>
         {/* controller section container */}
         <ScrollView
          showsVerticalScrollIndicator={false}
