@@ -13,6 +13,8 @@ import Cricket1 from '../../../../assets/svgs/Cricket1.svg'
 import Wind1 from '../../../../assets/svgs/Wind1.svg'
 import React from 'react';
 import {Colors} from '../../../shared/constants/Colors'
+import { useSoundVolumes } from '../../../shared/hooks/useSoundVolumes';
+import type { SoundKey } from '../../../shared/constants/sound';
 const iconMapStyle = {width:24,height:24,color:Colors.line}
 const iconMap: Record<string, React.ReactNode> = {
   rain1: <Rain1 {...iconMapStyle} />, 
@@ -28,19 +30,30 @@ const iconMap: Record<string, React.ReactNode> = {
 // 개별 음원 슬라이더 컴포넌트
 export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
     label: string;
-    soundKey: string;
+    soundKey: SoundKey;
     fileName: string;
     initialVolume: number;
   }) => {  
-    const { volume, handleSlider } = useSoundPlayer(soundKey, fileName, initialVolume);
+    // zustand + asyncStorage 연동 훅 사용
+    const { volumes, setVolume } = useSoundVolumes();
     const [containerWidth, setContainerWidth] = useState(0);
+    // 네이티브 오디오 제어 훅
+    const { handleSlider } = useSoundPlayer(soundKey, fileName, initialVolume);
 
+    // 볼륨 변경 핸들러
+    const handleSliderAndStore = (value: number) => {
+      setVolume(soundKey, value); // store/asyncStorage에 저장
+      handleSlider(value);        // 네이티브 모듈 제어
+    };
+
+    // 최초 마운트 시 볼륨이 0 초과면 자동 재생 (기존 로직 유지)
     useEffect(() => {
-      // 초기 볼륨이 0 초과면 자동 재생
       if (initialVolume > 0) {
-        handleSlider(initialVolume);
+        handleSliderAndStore(initialVolume);
       }
     }, []);
+
+    const volume = volumes[soundKey] ?? 0;
 
     return (
       <View 
@@ -50,7 +63,7 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
           {/* <Text text={label}/> */}
         </View>
         <View className="w-full flex-row items-center">
-        {iconMap[label]}
+        {iconMap[soundKey]}
         <View 
           className="ml-4 flex-1 justify-center items-start"
           onLayout={e => setContainerWidth(e.nativeEvent.layout.width)}>
@@ -61,7 +74,7 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
           width={containerWidth > 0 ? containerWidth : 200}
           height={30}
           value={volume}
-          onChange={handleSlider}
+          onChange={handleSliderAndStore}
         />
         <Text text={`${Math.floor(volume * 100)}`} type="semibold" className="absolute left-4"/>
         </View>
