@@ -67,9 +67,9 @@ const RNHorizontalSlider = React.forwardRef<TSliderRef, TSliderProps>(
       step = 1,
       width = 300,
       height = 10,
-      borderRadius = 5,
-      maximumTrackTintColor = Colors.blue,
-      minimumTrackTintColor = Colors.purple,
+      borderRadius = 50,
+      maximumTrackTintColor = Colors.background,
+      minimumTrackTintColor = Colors.blue,
       disabled = false,
       onChange = () => {},
       onComplete = () => {},
@@ -144,8 +144,8 @@ const RNHorizontalSlider = React.forwardRef<TSliderRef, TSliderProps>(
     return (
       <GestureDetector gesture={panGesture}>
         <View style={[baseViewStyle, styles.container, containerStyle]}>
-          <View style={[styles.box, baseViewStyle, sliderStyle]}>
-            <Animated.View style={[styles.box, slider]} />
+          <View style={[styles.box, baseViewStyle, sliderStyle, { overflow: 'hidden' }]}>
+            <Animated.View style={[styles.box, slider, { borderRadius }]} />
           </View>
           {showIndicator && (
             <Animated.View style={[styles.indicatorContainer, indicator]}>
@@ -173,6 +173,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: '50%',
     transform: [{ translateY: -20 }],
+    borderRadius: '100%',
+
   },
   indicator: {
     // position: 'absolute',
