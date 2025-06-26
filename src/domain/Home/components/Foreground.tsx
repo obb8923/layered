@@ -26,14 +26,14 @@ export const Foreground = () => {
         }}
         >
 
-        <Sun style={{height:containerHeight/4,width:containerHeight/2,position:'absolute',top:0,left:0}} fill={Colors.line}/>
-        <Mountain style={{height:containerHeight/2,width:containerWidth/2,position:'absolute',top:0,right:0}} fill={Colors.line}/>
-        <River style={{height:containerHeight/2,width:containerHeight/2,position:'absolute',bottom:0,left:containerWidth/2,right:0}} fill={Colors.line}/>
-        <Frog style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',bottom:0,left:0}} fill={Colors.line}/>
-        <Rain1 style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',top:0,left:0}} fill={Colors.line}/>
-        <Rain2 style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',top:0,left:0}} fill={Colors.line} />
-        <Bonfire style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',bottom:0,left:0}}fill={Colors.line}/>
-        <Tree style={{height:containerHeight/2,width:containerHeight/4,position:'absolute',bottom:0,right:0,backgroundColor:'#fff'}} fill={Colors.line}/>
+        <Sun style={{height:containerHeight/4,width:containerHeight/2,position:'absolute',top:0,left:0,color:Colors.line}}/>
+        <Mountain style={{height:containerHeight/2,width:containerWidth/2,position:'absolute',top:0,right:0,color:Colors.line}}/>
+        <River style={{height:containerHeight/2,width:containerHeight/2,position:'absolute',bottom:0,left:containerWidth/2,right:0,color:Colors.line}}/>
+        <Frog style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',bottom:0,left:0,color:Colors.line}}/>
+        <Rain1 style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',top:0,left:0,color:Colors.line}}/>
+        <Rain2 style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',top:0,left:0,color:Colors.line}} />
+        <Bonfire style={{height:containerHeight/4,width:containerHeight/4,position:'absolute',bottom:0,left:0,color:Colors.line}}/>
+        <Tree style={{height:containerHeight/2,width:containerHeight/4,position:'absolute',bottom:0,right:0,color:Colors.line}}/>
 
         </View>
       </View>
