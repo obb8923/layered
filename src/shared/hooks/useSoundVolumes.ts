@@ -1,9 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSoundVolumeStore } from '../store/soundVolumeStore';
 import { soundList, SoundKey } from '../constants/sound';
+import debounce from 'lodash.debounce';
 
 const STORAGE_KEY = 'sound_volumes';
+
+// 타입 선언이 없을 경우를 위한 모듈 선언
+// @ts-ignore
+// eslint-disable-next-line
+// declare module 'lodash.debounce';
 
 export const useSoundVolumes = () => {
   const { volumes, setVolume } = useSoundVolumeStore();
@@ -34,9 +40,17 @@ export const useSoundVolumes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // 볼륨이 바뀔 때마다 AsyncStorage에 저장
+  // 디바운스된 저장 함수 생성
+  const debouncedSave = useRef(
+    debounce((vols: typeof volumes) => {
+      AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(vols));
+    }, 3000)
+  ).current;
+
+  // 볼륨이 바뀔 때마다 디바운스 저장 함수 호출
   useEffect(() => {
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(volumes));
+    debouncedSave(volumes);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [volumes]);
 
   return { volumes, setVolume };
