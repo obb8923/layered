@@ -39,8 +39,10 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
     const [containerWidth, setContainerWidth] = useState(0);
     // 네이티브 오디오 제어 훅
     const { handleSlider } = useSoundPlayer(soundKey, fileName, initialVolume);
+    // 로컬 상태로 UI만 빠르게 반영
+    const [localVolume, setLocalVolume] = useState(initialVolume);
 
-    // 볼륨 변경 핸들러
+    // 볼륨 변경 핸들러 (네이티브/스토어)
     const handleSliderAndStore = (value: number) => {
       setVolume(soundKey, value); // store/asyncStorage에 저장
       handleSlider(value);        // 네이티브 모듈 제어
@@ -53,7 +55,10 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
       }
     }, []);
 
-    const volume = volumes[soundKey] ?? 0;
+    // zustand store 값이 바뀌면 로컬 볼륨도 동기화
+    useEffect(() => {
+      setLocalVolume(volumes[soundKey] ?? 0);
+    }, [volumes[soundKey]]);
 
     return (
       <View 
@@ -73,10 +78,11 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
           step={0.01}
           width={containerWidth > 0 ? containerWidth : 200}
           height={30}
-          value={volume}
-          onChange={handleSliderAndStore}
+          value={localVolume}
+          onChange={setLocalVolume} // UI만 업데이트
+          onComplete={handleSliderAndStore} // 네이티브/스토어
         />
-        <Text text={`${Math.floor(volume * 100)}`} type="semibold" className="absolute left-4"/>
+        <Text text={`${Math.floor(localVolume * 100)}`} type="semibold" className="absolute left-4"/>
         </View>
         </View>
       </View>
