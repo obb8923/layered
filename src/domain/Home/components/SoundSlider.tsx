@@ -48,16 +48,11 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
       handleSlider(value);        // 네이티브 모듈 제어
     };
 
-    // 최초 마운트 시 볼륨이 0 초과면 자동 재생 (기존 로직 유지)
+    // zustand store 값이 바뀌면 로컬 볼륨도 동기화 + 네이티브 소리 모듈도 동기화
     useEffect(() => {
-      if (initialVolume > 0) {
-        handleSliderAndStore(initialVolume);
-      }
-    }, []);
-
-    // zustand store 값이 바뀌면 로컬 볼륨도 동기화
-    useEffect(() => {
-      setLocalVolume(volumes[soundKey] ?? 0);
+      const newVolume = volumes[soundKey] ?? 0;
+      setLocalVolume(newVolume);
+      handleSlider(newVolume);
     }, [volumes[soundKey]]);
 
     return (
