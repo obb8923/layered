@@ -44,7 +44,7 @@ export const useSoundVolumes = () => {
   const debouncedSave = useRef(
     debounce((vols: typeof volumes) => {
       AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(vols));
-    }, 3000)
+    }, 1000) // 1초
   ).current;
 
   // 볼륨이 바뀔 때마다 디바운스 저장 함수 호출
