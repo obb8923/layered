@@ -1,6 +1,7 @@
 package com.jeong.layered
 
 import android.media.MediaPlayer
+import android.os.Handler
 import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.module.annotations.ReactModule
@@ -12,8 +13,8 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         const val TAG = "AudioModule"
     }
 
-    // key별로 MediaPlayer 인스턴스를 관리하여 여러 사운드를 동시에 재생할 수 있습니다.
-    private val players = mutableMapOf<String, MediaPlayer>()
+    // key별로 PCMTrackPlayer 인스턴스를 관리하여 여러 사운드를 동시에 재생할 수 있습니다.
+    private val players = mutableMapOf<String, PCMTrackPlayer>()
 
     override fun getName(): String = NAME
 
@@ -27,8 +28,9 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     fun play(key: String, fileName: String, promise: Promise) {
         Log.d(TAG, "play called: key=$key, fileName=$fileName")
         try {
+            // 확장자까지 포함한 파일명을 그대로 사용 (예: wind1.pcm)
             val resId = reactApplicationContext.resources.getIdentifier(
-                fileName.substringBeforeLast('.'),
+                fileName,
                 "raw",
                 reactApplicationContext.packageName
             )
@@ -39,17 +41,11 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
                 return
             }
             // 기존 플레이어 정리
-            players[key]?.release()
-            val player = MediaPlayer.create(reactApplicationContext, resId)
-            if (player == null) {
-                Log.e(TAG, "MediaPlayer.create 실패: $fileName")
-                promise.reject("CREATE_ERROR", "MediaPlayer.create 실패")
-                return
-            }
-            player.isLooping = true
-            player.start()
-            players[key] = player
-            Log.d(TAG, "재생 시작: key=$key, fileName=$fileName")
+            players[key]?.stop()
+            val pcmPlayer = PCMTrackPlayer(reactApplicationContext, resId)
+            pcmPlayer.start()
+            players[key] = pcmPlayer
+            Log.d(TAG, "PCM 재생 시작: key=$key, fileName=$fileName (AudioTrack, raw PCM)")
             promise.resolve(true)
         } catch (e: Exception) {
             Log.e(TAG, "play error", e)
@@ -65,7 +61,6 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         Log.d(TAG, "stop called: key=$key")
         try {
             players[key]?.stop()
-            players[key]?.release()
             players.remove(key)
             Log.d(TAG, "정지 완료: key=$key")
             promise.resolve(true)
@@ -82,12 +77,80 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     fun setVolume(key: String, volume: Double, promise: Promise) {
         Log.d(TAG, "setVolume called: key=$key, volume=$volume")
         try {
-            players[key]?.setVolume(volume.toFloat(), volume.toFloat())
+            players[key]?.setVolume(volume.toFloat())
             Log.d(TAG, "볼륨 설정 완료: key=$key, volume=$volume")
             promise.resolve(true)
         } catch (e: Exception) {
             Log.e(TAG, "setVolume error", e)
             promise.reject("VOLUME_ERROR", e)
+        }
+    }
+
+    // PCMTrackPlayer 클래스 정의 (내부 클래스)
+    private inner class PCMTrackPlayer(
+        val context: ReactApplicationContext,
+        val resId: Int
+    ) {
+        private var audioTrack: android.media.AudioTrack? = null
+        private var isPlaying = false
+        private var playThread: Thread? = null
+        private var pcmData: ByteArray? = null
+
+        fun start() {
+            if (isPlaying) return
+            isPlaying = true
+            pcmData = loadPCMFromRaw(resId)
+            if (pcmData == null) {
+                Log.e(TAG, "PCM 데이터 로드 실패")
+                isPlaying = false
+                return
+            }
+            val sampleRate = 44100 // PCM 파일에 맞게 수정
+            val channelConfig = android.media.AudioFormat.CHANNEL_OUT_MONO // 또는 CHANNEL_OUT_STEREO
+            val audioFormat = android.media.AudioFormat.ENCODING_PCM_16BIT
+
+            val minBufferSize = android.media.AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat)
+            audioTrack = android.media.AudioTrack(
+                android.media.AudioManager.STREAM_MUSIC,
+                sampleRate,
+                channelConfig,
+                audioFormat,
+                minBufferSize,
+                android.media.AudioTrack.MODE_STREAM
+            )
+            audioTrack?.play()
+
+            playThread = Thread {
+                while (isPlaying) {
+                    pcmData?.let {
+                        var offset = 0
+                        while (offset < it.size && isPlaying) {
+                            val written = audioTrack?.write(it, offset, it.size - offset) ?: 0
+                            if (written > 0) offset += written else break
+                        }
+                    }
+                }
+            }
+            playThread?.start()
+        }
+
+        fun stop() {
+            isPlaying = false
+            try { playThread?.join(500) } catch (_: Exception) {}
+            audioTrack?.stop()
+            audioTrack?.release()
+            audioTrack = null
+            playThread = null
+        }
+
+        fun setVolume(volume: Float) {
+            audioTrack?.setVolume(volume)
+        }
+
+        private fun loadPCMFromRaw(resId: Int): ByteArray? {
+            // PCM 파일 전체를 그대로 읽음 (헤더 없음)
+            val inputStream = context.resources.openRawResource(resId)
+            return inputStream.readBytes()
         }
     }
 } 
