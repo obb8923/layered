@@ -93,7 +93,6 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     ) {
         private var audioTrack: android.media.AudioTrack? = null
         private var isPlaying = false
-        private var playThread: Thread? = null
         private var pcmData: ByteArray? = null
 
         fun start() {
@@ -108,39 +107,27 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
             val sampleRate = 44100 // PCM 파일에 맞게 수정
             val channelConfig = android.media.AudioFormat.CHANNEL_OUT_MONO // 또는 CHANNEL_OUT_STEREO
             val audioFormat = android.media.AudioFormat.ENCODING_PCM_16BIT
+            val frameCount = pcmData!!.size / 2 // 16bit = 2byte
 
-            val minBufferSize = android.media.AudioTrack.getMinBufferSize(sampleRate, channelConfig, audioFormat)
             audioTrack = android.media.AudioTrack(
                 android.media.AudioManager.STREAM_MUSIC,
                 sampleRate,
                 channelConfig,
                 audioFormat,
-                minBufferSize,
-                android.media.AudioTrack.MODE_STREAM
+                pcmData!!.size,
+                android.media.AudioTrack.MODE_STATIC
             )
+            audioTrack?.write(pcmData!!, 0, pcmData!!.size)
+            // 반드시 write 후 setLoopPoints, play 순서!
+            audioTrack?.setLoopPoints(0, frameCount, -1)
             audioTrack?.play()
-
-            playThread = Thread {
-                while (isPlaying) {
-                    pcmData?.let {
-                        var offset = 0
-                        while (offset < it.size && isPlaying) {
-                            val written = audioTrack?.write(it, offset, it.size - offset) ?: 0
-                            if (written > 0) offset += written else break
-                        }
-                    }
-                }
-            }
-            playThread?.start()
         }
 
         fun stop() {
             isPlaying = false
-            try { playThread?.join(500) } catch (_: Exception) {}
             audioTrack?.stop()
             audioTrack?.release()
             audioTrack = null
-            playThread = null
         }
 
         fun setVolume(volume: Float) {
@@ -148,7 +135,6 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         }
 
         private fun loadPCMFromRaw(resId: Int): ByteArray? {
-            // PCM 파일 전체를 그대로 읽음 (헤더 없음)
             val inputStream = context.resources.openRawResource(resId)
             return inputStream.readBytes()
         }
