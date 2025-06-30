@@ -23,11 +23,6 @@ export const Foreground = () => {
 
     // zustand store에서 모든 음원의 볼륨 가져오기
     const volumes = useSoundVolumeStore(state => state.volumes);
-    const soundVolumes = soundList.map(sound => ({
-      key: sound.key,
-      label: sound.label,
-      volume: volumes[sound.key] ?? sound.defaultVolume
-    }));
 
     // Rain1, Rain2 볼륨 값 추출
     const rain1Volume = volumes["rain1"] ?? soundList.find(s => s.key === "rain1")?.defaultVolume ?? 0;
@@ -42,9 +37,7 @@ export const Foreground = () => {
     const riverVolume = volumes["river1"] ?? soundList.find(s => s.key === "river1")?.defaultVolume ?? 0;
     const birdVolume = volumes["bird1"] ?? soundList.find(s => s.key === "bird1")?.defaultVolume ?? 0;
     const showBonfire = bonfireVolume > 0;
-    const showFrog = frogVolume > 0;
     const showRiver = riverVolume > 0;
-    const showBird = birdVolume > 0;
 
     // Frog 개수 계산
     let frogCount = 0;
