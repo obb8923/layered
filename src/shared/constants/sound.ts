@@ -11,19 +11,19 @@ export const soundList = [
 export type SoundKey = typeof soundList[number]["key"];
 
 export const presetList = [
-  [{ key: "rain1",  volume: 0.3 },
-    { key: "rain2", volume: 0 },
+  [{ key: "rain1",  volume: 0.24 },
+    { key: "rain2", volume: 0.76 },
     { key: "frog1",  volume: 0 },
     { key: "wind1", volume: 0 },
     { key: "river1",  volume: 0 },
-    { key: "fire1",  volume: 0 },
+    { key: "fire1",  volume: 0.28 },
     { key: "bird1",  volume: 0 },
     { key: "crickets1", volume: 0 }],
-    [{ key: "rain1",  volume: 0.9 },
-      { key: "rain2", volume: 0 },
+    [{ key: "rain1",  volume: 0.33 },
+      { key: "rain2", volume: 1 },
       { key: "frog1",  volume: 0 },
-      { key: "wind1", volume: 0 },
-      { key: "river1",  volume: 0 },
+      { key: "wind1", volume: 0.41 },
+      { key: "river1",  volume: 0.03 },
       { key: "fire1",  volume: 0 },
       { key: "bird1",  volume: 0 },
       { key: "crickets1", volume: 0 }]
