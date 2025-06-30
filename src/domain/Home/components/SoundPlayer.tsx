@@ -8,7 +8,7 @@ import { useSoundVolumes } from '../../../shared/hooks/useSoundVolumes';
 export const SoundPlayer = () => {
   const { volumes } = useSoundVolumes();
   return (
-    <View style={{ marginTop: 24 }}>
+    <View>
       {soundList.map(sound => (
         <SoundSlider
           key={sound.key}
