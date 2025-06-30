@@ -1,5 +1,5 @@
-import React from 'react';
-import { View ,ScrollView, TouchableOpacity} from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View ,ScrollView, TouchableOpacity, Animated } from 'react-native';
 import { Background } from '../../shared/components/Background';
 import { Text } from '../../shared/components/Text';
 import { SoundPlayer } from './components/SoundPlayer';
@@ -10,14 +10,27 @@ import { useSoundVolumeStore } from '../../shared/store/soundVolumeStore';
 import ShuffleIcon from "../../../assets/svgs/Shuffle.svg"
 import PlayIcon from "../../../assets/svgs/Play.svg"
 import PauseIcon from "../../../assets/svgs/Pause.svg"
-
-
+import ClockIcon from "../../../assets/svgs/Clock.svg"
 import {Colors} from "../../shared/constants/Colors"
+import { useTimerModalStore } from '../../shared/store/timerModalStore';
+import { TimerModal } from '../../shared/components/TimerModal';
 
 export function HomeScreen() {
   const foregroundStyle = {height:FOREGROUND_HEIGHT,marginTop:24}
   const { setRandomVolumes } = useSoundVolumes();
   const { isPaused, pause, resume } = useSoundVolumeStore();
+  const { open, remainingSeconds, timerRunning } = useTimerModalStore();
+
+  // Animated width 값 준비
+  const animatedWidth = useRef(new Animated.Value(remainingSeconds > 0 ? 140 : 64)).current;
+
+  useEffect(() => {
+    Animated.timing(animatedWidth, {
+      toValue: remainingSeconds > 0 ? 140 : 64,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [remainingSeconds]);
 
   const handlePauseToggle = () => {
     if (isPaused) {
@@ -72,7 +85,37 @@ export function HomeScreen() {
                    <PauseIcon width={24} height={24} color={Colors.line}/>
                   )}
                 </TouchableOpacity>
+                {/* timer button + 시간 표시 */}
+                <Animated.View style={{ width: animatedWidth }}>
+                  <TouchableOpacity 
+                    style={{
+                      height: 64,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      borderRadius: 32,
+                      backgroundColor: Colors.controller,
+                      paddingHorizontal: 8,
+                      overflow: 'hidden',
+                      width: '100%',
+                    }}
+                    onPress={open}
+                    activeOpacity={0.8}
+                  >
+                    <ClockIcon width={24} height={24} color={Colors.line} />
+                    {remainingSeconds > 0 && (
+                    <Text
+                      className="ml-2 text-base text-gray-700 font-semibold"
+                      text={
+                        `${Math.floor(remainingSeconds / 3600) > 0 ? Math.floor(remainingSeconds / 3600) + '시간 ' : ''}` +
+                        `${Math.floor((remainingSeconds % 3600) / 60) > 0 ? Math.floor((remainingSeconds % 3600) / 60) + '분 ' : ''}`
+                      }
+                    />
+                  )}
+                  </TouchableOpacity>
+                </Animated.View>
               </View>
+
               <View className="h-4"/>
               {/* sliders */}
             <SoundPlayer />
@@ -81,6 +124,7 @@ export function HomeScreen() {
           </View>
         </ScrollView>
       </View>
+      <TimerModal />
     </Background>
   );
 }
