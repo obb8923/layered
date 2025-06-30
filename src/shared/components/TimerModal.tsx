@@ -1,14 +1,17 @@
-import React from 'react';
-import { Modal, View, TouchableOpacity} from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, TouchableOpacity, Animated, Dimensions } from 'react-native';
 import Slider from './Slider';
 import { useTimerModalStore } from '../store/timerModalStore';
 import {Text} from "../../shared/components/Text"
 import { useSoundVolumeStore } from '../store/soundVolumeStore';
-
+import {Colors} from '../constants/Colors'
 export function TimerModal() {
   const { isOpen, minutes, setMinutes, close, startTimer } = useTimerModalStore();
   const { isPaused, resume } = useSoundVolumeStore();
   const [sliderWidth, setSliderWidth] = React.useState(0);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(50)).current;
+  const [visible, setVisible] = React.useState(false);
 
   const handleConfirm = () => {
     if (isPaused) resume();
@@ -16,75 +19,121 @@ export function TimerModal() {
     close();
   };
 
+  useEffect(() => {
+    if (isOpen) {
+      setVisible(true);
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        })
+      ]).start();
+    } else if (visible) {
+      Animated.parallel([
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 50,
+          duration: 200,
+          useNativeDriver: true,
+        })
+      ]).start(() => {
+        setVisible(false);
+      });
+    }
+  }, [isOpen]);
+
+  if (!visible) return null;
+
   return (
-    <Modal
-      visible={isOpen}
-      transparent
-      animationType="fade"
-      onRequestClose={close}
+    <Animated.View
+      pointerEvents={isOpen ? 'auto' : 'none'}
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 100,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        opacity: opacity,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     >
-        {/* background shadow */}
-      <View className="flex-1 bg-black/60 justify-center items-center">
-      {/* container */}
-        <View className="w-5/6 bg-controller rounded-2xl p-6 items-center relative">
-          {/* 오른쪽 위 X 버튼 (View로 네모 X) */}
-          <TouchableOpacity className="absolute top-0 right-[-18] w-14 h-14 p-1 items-center justify-center z-10 bg-controller rounded-full" onPress={handleConfirm}>
-            <View className="items-center justify-center bg-background w-full h-full p-2 rounded-full">
-            <View className="w-6 h-1 bg-white absolute" style={{ transform: [{ rotate: '45deg' }] }} />
-            <View className="w-6 h-1 bg-white absolute" style={{ transform: [{ rotate: '-45deg' }] }} />
-            </View>
+      <Animated.View
+        style={{
+          width: '83%',
+          backgroundColor: Colors.controller,
+          borderRadius: 20,
+          padding: 24,
+          alignItems: 'center',
+          position: 'relative',
+          transform: [{ translateY }],
+        }}
+      >
+        {/* 오른쪽 위 X 버튼 (View로 네모 X) */}
+        <TouchableOpacity style={{ position: 'absolute', top: 0, right: -18, width: 56, height: 56, padding: 4, alignItems: 'center', justifyContent: 'center', zIndex: 10, backgroundColor: Colors.controller, borderRadius: 28 }} onPress={handleConfirm}>
+          <View style={{ alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.background, width: '100%', height: '100%', padding: 8, borderRadius: 28 }}>
+            <View style={{ width: 24, height: 4, backgroundColor: 'white', position: 'absolute', transform: [{ rotate: '45deg' }] }} />
+            <View style={{ width: 24, height: 4, backgroundColor: 'white', position: 'absolute', transform: [{ rotate: '-45deg' }] }} />
+          </View>
+        </TouchableOpacity>
+        <Text className="text-xl font-bold mb-4" text="Timer"/>
+        <Text className="text-lg mb-4" text={`${Math.floor(minutes / 60)}h ${Math.floor(minutes % 60)}m`}></Text>
+        <View className="flex-row mb-4 w-full justify-center justify-evenly">
+          <TouchableOpacity
+            className="px-4 py-2 mx-1 rounded-full border border-gray-300"
+            onPress={() => setMinutes(0)}
+          >
+            <Text className="text-base text-gray-700" text="off"/>
           </TouchableOpacity>
-          <Text className="text-xl font-bold mb-4" text="Timer"/>
-          <Text className="text-lg mb-4" text={`${Math.floor(minutes / 60)}h ${Math.floor(minutes % 60)}m`}></Text>
-          <View className="flex-row mb-4 w-full justify-center justify-evenly">
-            <TouchableOpacity
-              className="px-4 py-2 mx-1 rounded-full border border-gray-300"
-              onPress={() => setMinutes(0)}
-            >
-              <Text className="text-base text-gray-700" text="off"/>
-            </TouchableOpacity>
-            {/* <TouchableOpacity
-              className="px-4 py-2 mx-1 rounded-full border border-gray-300"
-              onPress={() => setMinutes(0.0833)}
-            >
-              <Text className="text-base text-gray-700" text="5s"/>
-            </TouchableOpacity> */}
-            <TouchableOpacity
-              className="px-4 py-2 mx-1 rounded-full border border-gray-300"
-              onPress={() => setMinutes(Math.min(minutes + 30, 360))}
-            >
-              <Text className="text-base text-gray-700" text="30m"/>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="px-4 py-2 mx-1 rounded-full border border-gray-300"
-              onPress={() => setMinutes(Math.min(minutes + 60, 360))}
-            >
-              <Text className="text-base text-gray-700" text="1h"/>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="px-4 py-2 mx-1 rounded-full border border-gray-300"
-              onPress={() => setMinutes(Math.min(minutes + 180, 360))}
-            >
-              <Text className="text-base text-black" text="3h"/>
-            </TouchableOpacity>
-          </View>
-          <View 
-          className="w-full justify-center items-center" 
-          onLayout={e => setSliderWidth(e.nativeEvent.layout.width)}>
-            {sliderWidth > 0 && (
-              <Slider
-                min={0}
-                max={360}
-                step={5}
-                value={minutes}
-                onChange={setMinutes}
-                width={sliderWidth}
-                height={36}
-              />
-            )}
-          </View>
+          <TouchableOpacity
+            className="px-4 py-2 mx-1 rounded-full border border-gray-300"
+            onPress={() => setMinutes(Math.min(minutes + 30, 360))}
+          >
+            <Text className="text-base text-gray-700" text="30m"/>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="px-4 py-2 mx-1 rounded-full border border-gray-300"
+            onPress={() => setMinutes(Math.min(minutes + 60, 360))}
+          >
+            <Text className="text-base text-gray-700" text="1h"/>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="px-4 py-2 mx-1 rounded-full border border-gray-300"
+            onPress={() => setMinutes(Math.min(minutes + 180, 360))}
+          >
+            <Text className="text-base text-black" text="3h"/>
+          </TouchableOpacity>
         </View>
-      </View>
-    </Modal>
+        <View
+          className="w-full justify-center items-center"
+          onLayout={e => setSliderWidth(e.nativeEvent.layout.width)}
+          pointerEvents="none"
+        >
+          {sliderWidth > 0 && (
+            <Slider
+              min={0}
+              max={360}
+              step={5}
+              value={minutes}
+              onChange={setMinutes}
+              width={sliderWidth}
+              height={36}
+            />
+          )}
+        </View>
+      </Animated.View>
+    </Animated.View>
   );
 }

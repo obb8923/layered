@@ -5,7 +5,6 @@ import { Text } from '../../shared/components/Text';
 import { SoundPlayer } from './components/SoundPlayer';
 import { FOREGROUND_HEIGHT } from '../../shared/constants/normal'
 import {Foreground} from './components/Foreground'
-import { useSoundVolumes } from '../../shared/hooks/useSoundVolumes';
 import { useSoundVolumeStore } from '../../shared/store/soundVolumeStore';
 import ShuffleIcon from "../../../assets/svgs/Shuffle.svg"
 import PlayIcon from "../../../assets/svgs/Play.svg"
@@ -13,7 +12,6 @@ import PauseIcon from "../../../assets/svgs/Pause.svg"
 import ClockIcon from "../../../assets/svgs/Clock.svg"
 import {Colors} from "../../shared/constants/Colors"
 import { useTimerModalStore } from '../../shared/store/timerModalStore';
-import { TimerModal } from '../../shared/components/TimerModal';
 import { usePresetActions } from '../../shared/hooks/usePreset';
 import {presetList} from '../../shared/constants/sound'
 export function HomeScreen() {
@@ -141,7 +139,6 @@ export function HomeScreen() {
           </View>
         </ScrollView>
       </View>
-      <TimerModal />
     </Background>
   );
 }

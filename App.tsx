@@ -7,6 +7,8 @@ import { SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HomeScreen } from './src/domain/Home';
 import { useInitPreset } from "./src/shared/hooks/usePreset"; 
+import { TimerModal } from "./src/shared/components/TimerModal";
+
 type RootStackParamList = {
   Home: undefined;
 };
@@ -19,6 +21,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <SafeAreaView style={{flex:1}} edges={[ 'left', 'right']} >
+        <TimerModal />
               <NavigationContainer>
                 <StatusBar barStyle="light-content" translucent={true}/>
                 <Stack.Navigator screenOptions={{headerShown:false}}>
