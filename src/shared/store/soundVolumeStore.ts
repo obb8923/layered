@@ -1,15 +1,20 @@
 import { create } from 'zustand';
 import type { SoundKey } from '../constants/sound';
 import { soundList } from '../constants/sound';
+import AudioModule from '../modules/AudioModule';
 
 interface SoundVolumeState {
   volumes: { [soundKey in SoundKey]?: number };
+  isPaused: boolean;
   setVolume: (soundKey: SoundKey, volume: number) => void;
   setRandomVolumes: () => void;
+  pause: () => void;
+  resume: () => void;
 }
 
-export const useSoundVolumeStore = create<SoundVolumeState>((set) => ({
+export const useSoundVolumeStore = create<SoundVolumeState>((set, get) => ({
   volumes: {},
+  isPaused: false,
   setVolume: (soundKey, volume) =>
     set((state) => ({
       volumes: {
@@ -41,5 +46,13 @@ export const useSoundVolumeStore = create<SoundVolumeState>((set) => ({
       
       return { volumes: newVolumes };
     });
+  },
+  pause: () => {
+    set({ isPaused: true });
+    AudioModule.pause();
+  },
+  resume: () => {
+    set({ isPaused: false });
+    AudioModule.resume();
   },
 })); 

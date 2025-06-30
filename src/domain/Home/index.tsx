@@ -1,14 +1,25 @@
 import React from 'react';
-import { View ,ScrollView} from 'react-native';
+import { View ,ScrollView, TouchableOpacity} from 'react-native';
 import { Background } from '../../shared/components/Background';
 import { Text } from '../../shared/components/Text';
 import { SoundPlayer } from './components/SoundPlayer';
 import { FOREGROUND_HEIGHT } from '../../shared/constants/normal'
 import {Foreground} from './components/Foreground'
 import { useSoundVolumes } from '../../shared/hooks/useSoundVolumes';
+import { useSoundVolumeStore } from '../../shared/store/soundVolumeStore';
+
 export function HomeScreen() {
   const foregroundStyle = {height:FOREGROUND_HEIGHT,marginTop:24}
   const { setRandomVolumes } = useSoundVolumes();
+  const { isPaused, pause, resume } = useSoundVolumeStore();
+
+  const handlePauseToggle = () => {
+    if (isPaused) {
+      resume();
+    } else {
+      pause();
+    }
+  };
 
   return (
     <Background isStatusBarGap={true}>
@@ -31,8 +42,22 @@ export function HomeScreen() {
             </View>
             {/* controller */}
             <View className="px-8">
-              <View className="w-full flex-row justify-between items-center">
-                <View className="h-16 w-16 bg-green-500" onTouchEnd={()=>{setRandomVolumes()}}></View>
+              <View className="w-full flex-row justify-between items-center mb-4">
+                <TouchableOpacity 
+                  className="h-16 w-16 bg-green-500 rounded-lg items-center justify-center" 
+                  onPress={setRandomVolumes}
+                >
+                  <Text text="랜덤" className="text-white font-bold" />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  className={`h-16 w-16 rounded-lg items-center justify-center ${isPaused ? 'bg-green-500' : 'bg-orange-500'}`}
+                  onPress={handlePauseToggle}
+                >
+                  <Text 
+                    text={isPaused ? '재생' : '일시정지'} 
+                    className="text-white font-bold"
+                  />
+                </TouchableOpacity>
               </View>
             <SoundPlayer />
             </View>

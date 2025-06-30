@@ -15,6 +15,7 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
 
     // key별로 PCMTrackPlayer 인스턴스를 관리하여 여러 사운드를 동시에 재생할 수 있습니다.
     private val players = mutableMapOf<String, PCMTrackPlayer>()
+    private var isPaused = false
 
     override fun getName(): String = NAME
 
@@ -86,6 +87,44 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
         }
     }
 
+    /**
+     * 모든 사운드를 일시정지합니다.
+     */
+    @ReactMethod
+    fun pause(promise: Promise) {
+        Log.d(TAG, "pause called")
+        try {
+            isPaused = true
+            players.values.forEach { player ->
+                player.pause()
+            }
+            Log.d(TAG, "일시정지 완료")
+            promise.resolve(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "pause error", e)
+            promise.reject("PAUSE_ERROR", e)
+        }
+    }
+
+    /**
+     * 일시정지된 모든 사운드를 재개합니다.
+     */
+    @ReactMethod
+    fun resume(promise: Promise) {
+        Log.d(TAG, "resume called")
+        try {
+            isPaused = false
+            players.values.forEach { player ->
+                player.resume()
+            }
+            Log.d(TAG, "재생 재개 완료")
+            promise.resolve(true)
+        } catch (e: Exception) {
+            Log.e(TAG, "resume error", e)
+            promise.reject("RESUME_ERROR", e)
+        }
+    }
+
     // PCMTrackPlayer 클래스 정의 (내부 클래스)
     private inner class PCMTrackPlayer(
         val context: ReactApplicationContext,
@@ -93,11 +132,15 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
     ) {
         private var audioTrack: android.media.AudioTrack? = null
         private var isPlaying = false
+        private var isPaused = false
         private var pcmData: ByteArray? = null
+        private var originalVolume: Float = 1.0f
+        private var currentVolume: Float = 1.0f
 
         fun start() {
             if (isPlaying) return
             isPlaying = true
+            isPaused = false
             pcmData = loadPCMFromRaw(resId)
             if (pcmData == null) {
                 Log.e(TAG, "PCM 데이터 로드 실패")
@@ -125,12 +168,29 @@ class AudioModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaM
 
         fun stop() {
             isPlaying = false
+            isPaused = false
             audioTrack?.stop()
             audioTrack?.release()
             audioTrack = null
         }
 
+        fun pause() {
+            if (isPlaying && !isPaused) {
+                isPaused = true
+                audioTrack?.pause()
+            }
+        }
+
+        fun resume() {
+            if (isPlaying && isPaused) {
+                isPaused = false
+                audioTrack?.play()
+            }
+        }
+
         fun setVolume(volume: Float) {
+            currentVolume = volume
+            originalVolume = volume
             audioTrack?.setVolume(volume)
         }
 
