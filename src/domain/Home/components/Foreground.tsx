@@ -1,5 +1,5 @@
-import {View} from 'react-native';
-import {useState} from 'react';
+import {View, Animated} from 'react-native';
+import {useState, useEffect, useRef} from 'react';
 import React from 'react';
 import {Colors} from '../../../shared/constants/Colors'
 import { FOREGROUND_HEIGHT } from '../../../shared/constants/normal'
@@ -60,6 +60,118 @@ export const Foreground = () => {
     const cricketsVolume = volumes["crickets1"] ?? soundList.find(s => s.key === "crickets1")?.defaultVolume ?? 0;
     const showCricket = cricketsVolume > 0;
 
+    // Animated values for each element
+    const sunOpacity = useRef(new Animated.Value(0)).current;
+    const rain1Opacity = useRef(new Animated.Value(0)).current;
+    const rain2Opacity = useRef(new Animated.Value(0)).current;
+    const riverOpacity = useRef(new Animated.Value(0)).current;
+    const bonfireOpacity = useRef(new Animated.Value(0)).current;
+    const frog1Opacity = useRef(new Animated.Value(0)).current;
+    const frog2Opacity = useRef(new Animated.Value(0)).current;
+    const frog3Opacity = useRef(new Animated.Value(0)).current;
+    const bird1Opacity = useRef(new Animated.Value(0)).current;
+    const bird2Opacity = useRef(new Animated.Value(0)).current;
+    const cricketOpacity = useRef(new Animated.Value(0)).current;
+
+    // Animation duration
+    const animationDuration = 500;
+
+    // Animate sun
+    useEffect(() => {
+        Animated.timing(sunOpacity, {
+            toValue: showSun ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [showSun, sunOpacity]);
+
+    // Animate rain1
+    useEffect(() => {
+        Animated.timing(rain1Opacity, {
+            toValue: showRain1 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [showRain1, rain1Opacity]);
+
+    // Animate rain2
+    useEffect(() => {
+        Animated.timing(rain2Opacity, {
+            toValue: showRain2 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [showRain2, rain2Opacity]);
+
+    // Animate river
+    useEffect(() => {
+        Animated.timing(riverOpacity, {
+            toValue: showRiver ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [showRiver, riverOpacity]);
+
+    // Animate bonfire
+    useEffect(() => {
+        Animated.timing(bonfireOpacity, {
+            toValue: showBonfire ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [showBonfire, bonfireOpacity]);
+
+    // Animate frogs
+    useEffect(() => {
+        Animated.timing(frog1Opacity, {
+            toValue: frogCount >= 1 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [frogCount, frog1Opacity]);
+
+    useEffect(() => {
+        Animated.timing(frog2Opacity, {
+            toValue: frogCount >= 2 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [frogCount, frog2Opacity]);
+
+    useEffect(() => {
+        Animated.timing(frog3Opacity, {
+            toValue: frogCount === 3 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [frogCount, frog3Opacity]);
+
+    // Animate birds
+    useEffect(() => {
+        Animated.timing(bird1Opacity, {
+            toValue: birdCount >= 1 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [birdCount, bird1Opacity]);
+
+    useEffect(() => {
+        Animated.timing(bird2Opacity, {
+            toValue: birdCount === 2 ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [birdCount, bird2Opacity]);
+
+    // Animate cricket
+    useEffect(() => {
+        Animated.timing(cricketOpacity, {
+            toValue: showCricket ? 1 : 0,
+            duration: animationDuration,
+            useNativeDriver: true,
+        }).start();
+    }, [showCricket, cricketOpacity]);
+
     return (
         <View className="absolute top-0 bottom-0 left-0 right-0 w-full justice-center items-center px-8" style={foregroundStyle}>
         <View 
@@ -71,116 +183,156 @@ export const Foreground = () => {
         >
 
         {/* 조건부 렌더링: Sun, Rain1, Rain2 */}
-        {showSun && (
+        <Animated.View style={{ 
+            opacity: sunOpacity, 
+            position: 'absolute',
+            top: containerHeight * 0.05, 
+            left: containerWidth * 0.05,
+            height: containerHeight / 6, 
+            width: containerHeight / 6
+        }}>
           <Sun 
             style={{
-                height: containerHeight / 6, width: containerHeight / 6,
-                position: 'absolute',
-                top: containerHeight * 0.05, left: containerWidth * 0.05,
                 color: Colors.line
             }}
           />
-        )}
-        {showRain1 && (
+        </Animated.View>
+        <Animated.View style={{ 
+            opacity: rain1Opacity, 
+            position: 'absolute',
+            top: containerHeight * 0.05, 
+            left: containerWidth * 0.05,
+            height: containerHeight / 6, 
+            width: containerHeight / 6
+        }}>
           <Rain1 
             style={{
-                height: containerHeight / 6, width: containerHeight / 6,
-                position: 'absolute',
-                top: containerHeight * 0.05, left: containerWidth * 0.05,
                 color: Colors.line
             }}
           />
-        )}
-        {showRain2 && (
+        </Animated.View>
+        <Animated.View style={{ 
+            opacity: rain2Opacity, 
+            position: 'absolute',
+            top: containerHeight * 0.1, 
+            left: containerWidth * 0.19,
+            height: containerHeight / 6, 
+            width: containerHeight / 6
+        }}>
           <Rain2 
             style={{
-                height: containerHeight / 6, width: containerHeight / 6,
-                position: 'absolute',
-                top: containerHeight * 0.1, left: containerWidth * 0.19,
                 color: Colors.line
             }}
           />
-        )}
+        </Animated.View>
 
         {/* 조건부 렌더링: River */}
-        {showRiver && (
+        <Animated.View style={{ 
+            opacity: riverOpacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.01, 
+            left: containerWidth * 0.25,
+            height: containerHeight / 2, 
+            width: containerWidth / 2
+        }}>
           <River 
             style={{
-                height: containerHeight / 2, width: containerWidth / 2,
-                position: 'absolute',
-                bottom: containerHeight * 0.01, left: containerWidth * 0.25,
                 color: Colors.line
             }}
           />
-        )}
+        </Animated.View>
 
         {/* 조건부 렌더링: Frog 여러 마리 */}
-        {frogCount >= 1 && (
+        <Animated.View style={{ 
+            opacity: frog1Opacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.01, 
+            left: containerWidth * 0.25,
+            height: containerHeight / 8, 
+            width: containerHeight / 8
+        }}>
           <Frog 
             style={{
-                height: containerHeight / 8, width: containerHeight / 8,
-                position: 'absolute',
-                bottom: containerHeight * 0.01, left: containerWidth * 0.25,
                 color: Colors.line
             }}
           />
-        )}
-        {frogCount >= 2 && (
+        </Animated.View>
+        <Animated.View style={{ 
+            opacity: frog2Opacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.02, 
+            left: containerWidth * 0.15,
+            height: containerHeight / 8, 
+            width: containerHeight / 8
+        }}>
           <Frog 
             style={{
-                height: containerHeight / 8, width: containerHeight / 8,
-                position: 'absolute',
-                bottom: containerHeight * 0.02, left: containerWidth * 0.15,
                 color: Colors.line
             }}
           />
-        )}
-        {frogCount === 3 && (
+        </Animated.View>
+        <Animated.View style={{ 
+            opacity: frog3Opacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.1, 
+            left: containerWidth * 0.23,
+            height: containerHeight / 8, 
+            width: containerHeight / 8
+        }}>
           <Frog 
             style={{
-                height: containerHeight / 8, width: containerHeight / 8,
-                position: 'absolute',
-                bottom: containerHeight * 0.1, left: containerWidth * 0.23,
                 color: Colors.line
             }}
           />
-        )}
+        </Animated.View>
 
         {/* 조건부 렌더링: Bonfire */}
-        {showBonfire && (
+        <Animated.View style={{ 
+            opacity: bonfireOpacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.3, 
+            left: containerWidth * 0.11,
+            height: containerHeight / 8, 
+            width: containerHeight / 8
+        }}>
           <Bonfire 
             style={{
-                height: containerHeight / 8, width: containerHeight / 8,
-                position: 'absolute',
-                bottom: containerHeight * 0.3, left: containerWidth * 0.11,
                 color: Colors.line
             }}
           />
-        )}
+        </Animated.View>
 
         {/* 조건부 렌더링: Bird1 여러 마리 */}
-        {birdCount >= 1 && (
+        <Animated.View style={{ 
+            opacity: bird1Opacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.3, 
+            right: containerWidth * 0.18,
+            height: containerHeight / 5, 
+            width: containerHeight / 10
+        }}>
           <Bird1
             style={{
-                height: containerHeight / 5, width: containerHeight / 10,
-                position: 'absolute',
-                bottom: containerHeight * 0.3, right: containerWidth * 0.18,
                 color: Colors.line,
                 transform: [{ scaleX: -1 }]
             }}
           />
-        )}
-        {birdCount === 2 && (
+        </Animated.View>
+        <Animated.View style={{ 
+            opacity: bird2Opacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0.24, 
+            right: containerWidth * 0.03,
+            height: containerHeight / 5, 
+            width: containerHeight / 10
+        }}>
           <Bird1
             style={{
-                height: containerHeight / 5, width: containerHeight / 10,
-                position: 'absolute',
-                bottom: containerHeight * 0.24, right: containerWidth * 0.03,
                 color: Colors.line,
                 transform: [{ scaleX: -1 }]
             }}
           />
-        )}
+        </Animated.View>
 
         <Mountain 
         style={{
@@ -224,17 +376,21 @@ export const Foreground = () => {
             color: Colors.line
         }}
         />
-        {showCricket&&
+        <Animated.View style={{ 
+            opacity: cricketOpacity, 
+            position: 'absolute',
+            bottom: containerHeight * 0, 
+            right: containerWidth * 0.09,
+            height: containerHeight / 14, 
+            width: containerHeight / 14
+        }}>
          <Cricket1
             style={{
-                height: containerHeight / 14, width: containerHeight / 14,
-                position: 'absolute',
-                bottom: containerHeight * 0, right: containerWidth * 0.09,
                 color: Colors.line,
                 transform: [{ scaleX: -1 }]
             }}
           />
-          }
+        </Animated.View>
         </View>
       </View>
     )
