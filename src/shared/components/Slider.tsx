@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import {Colors} from '../constants/Colors';
 import {
@@ -141,6 +141,9 @@ const RNHorizontalSlider = React.forwardRef<TSliderRef, TSliderProps>(
       }
       return style;
     }, [point.value, min, max, width, showIndicator, renderIndicatorWidth]);
+    useEffect(() => {
+      point.value = withSpring(currentValue, animationConfig);
+    }, [currentValue]);
     return (
       <GestureDetector gesture={panGesture}>
         <View style={[baseViewStyle, styles.container, containerStyle]}>

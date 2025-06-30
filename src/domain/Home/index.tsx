@@ -5,8 +5,11 @@ import { Text } from '../../shared/components/Text';
 import { SoundPlayer } from './components/SoundPlayer';
 import { FOREGROUND_HEIGHT } from '../../shared/constants/normal'
 import {Foreground} from './components/Foreground'
+import { useSoundVolumes } from '../../shared/hooks/useSoundVolumes';
 export function HomeScreen() {
   const foregroundStyle = {height:FOREGROUND_HEIGHT,marginTop:24}
+  const { setRandomVolumes } = useSoundVolumes();
+
   return (
     <Background isStatusBarGap={true}>
       <View className='flex-1'>
@@ -28,9 +31,10 @@ export function HomeScreen() {
             </View>
             {/* controller */}
             <View className="px-8">
+              <View className="w-full flex-row justify-between items-center">
+                <View className="h-16 w-16 bg-green-500" onTouchEnd={()=>{setRandomVolumes()}}></View>
+              </View>
             <SoundPlayer />
-           
-
             </View>
           </View>
           </View>

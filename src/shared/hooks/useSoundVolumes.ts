@@ -12,7 +12,7 @@ const STORAGE_KEY = 'sound_volumes';
 // declare module 'lodash.debounce';
 
 export const useSoundVolumes = () => {
-  const { volumes, setVolume } = useSoundVolumeStore();
+  const { volumes, setVolume, setRandomVolumes } = useSoundVolumeStore();
 
   // AsyncStorage에서 볼륨 불러와 zustand store 초기화
   useEffect(() => {
@@ -53,5 +53,5 @@ export const useSoundVolumes = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [volumes]);
 
-  return { volumes, setVolume };
+  return { volumes, setVolume, setRandomVolumes };
 }; 
