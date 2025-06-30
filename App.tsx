@@ -6,8 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { HomeScreen } from './src/domain/Home';
-import { useSoundVolumes } from "./src/shared/hooks/useSoundVolumes";
-
+import { useInitPreset } from "./src/shared/hooks/usePreset"; 
 type RootStackParamList = {
   Home: undefined;
 };
@@ -15,7 +14,7 @@ type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
-  useSoundVolumes();
+  useInitPreset();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>

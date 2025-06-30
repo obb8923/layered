@@ -15,7 +15,7 @@ export const SoundPlayer = () => {
           label={sound.label}
           soundKey={sound.key}
           fileName={sound.fileName}
-          initialVolume={volumes[sound.key] ?? sound.defaultVolume}
+          initialVolume={volumes[sound.key] ?? 0}
         />
       ))}
     </View>

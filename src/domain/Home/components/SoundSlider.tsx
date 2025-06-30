@@ -14,6 +14,7 @@ import Wind1 from '../../../../assets/svgs/Wind1.svg'
 import React from 'react';
 import {Colors} from '../../../shared/constants/Colors'
 import { useSoundVolumes } from '../../../shared/hooks/useSoundVolumes';
+import { usePresetActions } from '../../../shared/hooks/usePreset';
 import type { SoundKey } from '../../../shared/constants/sound';
 const iconMapStyle = {width:24,height:24,color:Colors.line}
 const iconMap: Record<string, React.ReactNode> = {
@@ -35,7 +36,8 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
     initialVolume: number;
   }) => {  
     // zustand + asyncStorage 연동 훅 사용
-    const { volumes, setVolume } = useSoundVolumes();
+    const { volumes } = useSoundVolumes();
+    const { setVolumeAndSyncPreset } = usePresetActions();
     const [containerWidth, setContainerWidth] = useState(0);
     // 네이티브 오디오 제어 훅
     const { handleSlider } = useSoundPlayer(soundKey, fileName, initialVolume);
@@ -44,7 +46,7 @@ export const SoundSlider = ({ label, soundKey, fileName, initialVolume }: {
 
     // 볼륨 변경 핸들러 (네이티브/스토어)
     const handleSliderAndStore = (value: number) => {
-      setVolume(soundKey, value); // store/asyncStorage에 저장
+      setVolumeAndSyncPreset(soundKey, value); // 프리셋까지 동기화
       handleSlider(value);        // 네이티브 모듈 제어
     };
 

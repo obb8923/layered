@@ -25,17 +25,17 @@ export const Foreground = () => {
     const volumes = useSoundVolumeStore(state => state.volumes);
 
     // Rain1, Rain2 볼륨 값 추출
-    const rain1Volume = volumes["rain1"] ?? soundList.find(s => s.key === "rain1")?.defaultVolume ?? 0;
-    const rain2Volume = volumes["rain2"] ?? soundList.find(s => s.key === "rain2")?.defaultVolume ?? 0;
+    const rain1Volume = volumes["rain1"] ?? 0;
+    const rain2Volume = volumes["rain2"] ?? 0;
     const showSun = rain1Volume === 0 && rain2Volume === 0;
     const showRain1 = rain1Volume > 0;
     const showRain2 = rain2Volume > 0;
 
     // 추가: Bonfire, Frog, River, Bird1 볼륨 값 및 표시 조건
-    const bonfireVolume = volumes["fire1"] ?? soundList.find(s => s.key === "fire1")?.defaultVolume ?? 0;
-    const frogVolume = volumes["frog1"] ?? soundList.find(s => s.key === "frog1")?.defaultVolume ?? 0;
-    const riverVolume = volumes["river1"] ?? soundList.find(s => s.key === "river1")?.defaultVolume ?? 0;
-    const birdVolume = volumes["bird1"] ?? soundList.find(s => s.key === "bird1")?.defaultVolume ?? 0;
+    const bonfireVolume = volumes["fire1"] ?? 0;
+    const frogVolume = volumes["frog1"] ?? 0;
+    const riverVolume = volumes["river1"] ?? 0;
+    const birdVolume = volumes["bird1"] ?? 0;
     const showBonfire = bonfireVolume > 0;
     const showRiver = riverVolume > 0;
 
@@ -50,7 +50,7 @@ export const Foreground = () => {
     if (birdVolume > 0 && birdVolume <= 0.5) birdCount = 1;
     else if (birdVolume > 0.5) birdCount = 2;
 
-    const cricketsVolume = volumes["crickets1"] ?? soundList.find(s => s.key === "crickets1")?.defaultVolume ?? 0;
+    const cricketsVolume = volumes["crickets1"] ?? 0;
     const showCricket = cricketsVolume > 0;
 
     // Animated values for each element

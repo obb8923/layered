@@ -35,8 +35,8 @@ export const Text = ({text, type='regular', ...props}: TextProps) => {
   return (
     <RNText 
     {...props}
+      style={[fontStyle(type), {color:Colors.line},props.style]}
       className={props.className}
-      style={[fontStyle(type), props.style,{color:Colors.line}]}
       numberOfLines={props.numberOfLines}>
       {text}
     </RNText>

@@ -14,13 +14,13 @@ import ClockIcon from "../../../assets/svgs/Clock.svg"
 import {Colors} from "../../shared/constants/Colors"
 import { useTimerModalStore } from '../../shared/store/timerModalStore';
 import { TimerModal } from '../../shared/components/TimerModal';
-
+import { usePresetActions } from '../../shared/hooks/usePreset';
+import {presetList} from '../../shared/constants/sound'
 export function HomeScreen() {
   const foregroundStyle = {height:FOREGROUND_HEIGHT,marginTop:24}
-  const { setRandomVolumes } = useSoundVolumes();
+  const { setRandomVolumesAndSyncPreset, selectedPreset, setSelectedPreset } = usePresetActions();
   const { isPaused, pause, resume } = useSoundVolumeStore();
   const { open, remainingSeconds, timerRunning } = useTimerModalStore();
-
   // Animated width 값 준비
   const animatedWidth = useRef(new Animated.Value(remainingSeconds > 0 ? 140 : 64)).current;
 
@@ -39,6 +39,9 @@ export function HomeScreen() {
       pause();
     }
   };
+  const presetHandler = (index:number)=>{
+    setSelectedPreset(index);
+  }
 
   return (
     <Background isStatusBarGap={true}>
@@ -68,7 +71,7 @@ export function HomeScreen() {
                 {/* random button */}
                 <TouchableOpacity 
                   className="h-16 w-16 items-center justify-center rounded-full bg-controller" 
-                  onPress={setRandomVolumes}
+                  onPress={setRandomVolumesAndSyncPreset}
                 >
                   <ShuffleIcon width={24} height={24} color={Colors.line} />
                 </TouchableOpacity>
@@ -116,7 +119,21 @@ export function HomeScreen() {
                 </Animated.View>
               </View>
 
-              <View className="h-4"/>
+              {/* preset selector */}
+              <View className="w-full flex-row mt-4 mb-6">
+                {presetList.map((_, idx) => (
+                  <TouchableOpacity
+                    key={idx}
+                    className={`mx-2 py-2 px-4 rounded-3xl ${selectedPreset==idx?'bg-line':'bg-background'}`}
+                    onPress={() => presetHandler(idx)}
+                  >
+                    <Text
+                      text={`preset ${idx + 1}`}
+                      style={{ color: `${selectedPreset==idx?Colors.background:Colors.line}` }}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
               {/* sliders */}
             <SoundPlayer />
             </View>
