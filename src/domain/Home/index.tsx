@@ -108,8 +108,8 @@ export function HomeScreen() {
                     <Text
                       className="ml-2 text-base text-gray-700 font-semibold"
                       text={
-                        `${Math.floor(remainingSeconds / 3600) > 0 ? Math.floor(remainingSeconds / 3600) + '시간 ' : ''}` +
-                        `${Math.floor((remainingSeconds % 3600) / 60) > 0 ? Math.floor((remainingSeconds % 3600) / 60) + '분 ' : ''}`
+                        `${Math.floor(remainingSeconds / 3600) > 0 ? Math.floor(remainingSeconds / 3600) + 'h ' : ''}` +
+                        `${Math.floor((remainingSeconds % 3600) / 60) > 0 ? Math.floor((remainingSeconds % 3600) / 60) + 'm' : ''}`
                       }
                     />
                   )}
